@@ -12,11 +12,11 @@ public class W101WikiClient {
 
     }
 
-    public void searchOrGetWikiPage() {
+    public static void searchOrGetWikiPage() {
 
     }
 
-    public void getWikiPage(String term, PageType pageType) throws IOException {
+    public static void getWikiPage(String term, PageType pageType) throws IOException {
         Document wikiPage = Jsoup.connect(WIKI_URL + pageType.name() + ":" + term).get();
     }
 }
