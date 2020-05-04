@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class W101Buddy extends Application {
+    // TODO make image gray scale
 
     private static final int WIDTH = 40;
 
@@ -66,7 +67,7 @@ public class W101Buddy extends Application {
             }
         });
 
-        searchBar = new JTextField("Search...", WIDTH); // TODO either make text background or remove
+        searchBar = new JTextField(WIDTH);
         searchBar.addActionListener(this::performSearch);
         window.add(searchBar);
         window.pack();
