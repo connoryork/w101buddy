@@ -7,11 +7,15 @@ import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.Document;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
+import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Insets;
@@ -30,9 +34,9 @@ import java.io.File;
 import java.io.IOException;
 
 public class W101Buddy extends Application {
-    // TODO make image gray scale
 
     private static final int WIDTH = 40;
+    private static final int RESULT_LENGTH = 400;
 
     private Rectangle boundingBox;
     private int windowX;
@@ -42,7 +46,7 @@ public class W101Buddy extends Application {
     private boolean onlySearchBar = true;
     private JFrame window;
     private JTextField searchBar;
-    private JTextPane resultArea;
+    private JEditorPane resultArea;
     private JScrollPane resultScroller;
 
     public static void main(String[] args) {
@@ -72,10 +76,19 @@ public class W101Buddy extends Application {
         window.add(searchBar);
         window.pack();
 
-        EmptyBorder eb = new EmptyBorder(new Insets(10, 10, 10, 10));
-        resultArea = new JTextPane(); // TODO increase size and not editable
-        resultArea.setBorder(eb);
+        // scrapped from https://alvinalexander.com/blog/post/jfc-swing/how-create-simple-swing-html-viewer-browser-java/
+        resultArea = new JEditorPane();
+        resultArea.setEditable(false);
+        HTMLEditorKit kit = new HTMLEditorKit();
+        resultArea.setEditorKit(kit);
+        StyleSheet styleSheet = kit.getStyleSheet();
+        // styleSheet.addRule() for any rules TODO
+        Document styledDocument = kit.createDefaultDocument();
+        resultArea.setDocument(styledDocument);
         resultArea.setMargin(new Insets(5, 5, 5, 5));
+        resultArea.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
+        resultArea.setPreferredSize(new Dimension(WIDTH, RESULT_LENGTH));
+
         resultScroller = new JScrollPane();
         resultScroller.setViewportView(resultArea);
     }
@@ -102,7 +115,7 @@ public class W101Buddy extends Application {
     }
 
     private Image getIconImage() {
-        File icon = new File("src/main/resources/icon.png");
+        File icon = new File("src/main/resources/white_spiral.png");
         try {
             return ImageIO.read(icon);
         } catch (IOException e) {
@@ -136,10 +149,16 @@ public class W101Buddy extends Application {
     }
 
     private void performSearch(ActionEvent event) {
+        if (event.getActionCommand().isEmpty()) {
+            return;
+        }
+
         System.out.println("Read in " + event.getActionCommand());
         if (onlySearchBar) {
             addResultAreaToWindow();
         }
+
+        resultArea.setText("<html><body><p>Hello World! I read in " + event.getActionCommand() + " </p></body></html>");
     }
 
     private void addResultAreaToWindow() {
