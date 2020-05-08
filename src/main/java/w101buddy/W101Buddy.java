@@ -32,6 +32,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 public class W101Buddy extends Application {
 
@@ -140,8 +141,8 @@ public class W101Buddy extends Application {
     }
 
     private void showWindow() {
-        int bufferedX = applyWindowSize(windowX, window.getPreferredSize().width, boundingBox.width);
-        int bufferedY = applyWindowSize(windowY, window.getPreferredSize().height, boundingBox.height);
+        int bufferedX = W101Buddy.applyWindowSize(windowX, window.getPreferredSize().width, boundingBox.width);
+        int bufferedY = W101Buddy.applyWindowSize(windowY, window.getPreferredSize().height, boundingBox.height);
 
         System.out.println("Placing window at x=" + bufferedX + " y=" + bufferedY);
         window.setLocation(bufferedX, bufferedY);
@@ -149,16 +150,21 @@ public class W101Buddy extends Application {
     }
 
     private void performSearch(ActionEvent event) {
-        if (event.getActionCommand().isEmpty()) {
+        String term = event.getActionCommand();
+        if (term.isEmpty()) {
             return;
-        }
-
-        System.out.println("Read in " + event.getActionCommand());
-        if (onlySearchBar) {
+        } else if (onlySearchBar) {
             addResultAreaToWindow();
         }
 
-        resultArea.setText("<html><body><p>Hello World! I read in " + event.getActionCommand() + " </p></body></html>");
+        String result;
+        try {
+            Optional<String> wikiResult = W101WikiClient.getWikiPage(term, PageType.Reagent);
+            result = wikiResult.orElseGet(() -> W101Buddy.htmlWrap("Wiki page does not exist, did you misspell anything?"));
+        } catch (IOException e) {
+            result = W101Buddy.htmlWrap("Request to Wizard101 Central failed!\nCheck your internet connection and try again.");
+        }
+        resultArea.setText(result);
     }
 
     private void addResultAreaToWindow() {
@@ -196,5 +202,9 @@ public class W101Buddy extends Application {
 
     private static int applyWindowSize(int position, int windowSize, int max) {
         return position + windowSize > max ? max - windowSize : position;
+    }
+
+    private static String htmlWrap(String s) {
+        return "<html><body>" + s + "</body></html>";
     }
 }
