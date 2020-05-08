@@ -32,7 +32,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
 
 public class W101Buddy extends Application {
 
@@ -157,14 +156,7 @@ public class W101Buddy extends Application {
             addResultAreaToWindow();
         }
 
-        String result;
-        try {
-            Optional<String> wikiResult = W101WikiClient.getWikiPage(term, W101WikiClient.PageType.Reagent);
-            result = wikiResult.orElseGet(() -> W101Buddy.htmlWrap("Wiki page does not exist, did you misspell anything?"));
-        } catch (IOException e) {
-            result = W101Buddy.htmlWrap("Request to Wizard101 Central failed!\nCheck your internet connection and try again.");
-        }
-        resultArea.setText(result);
+        resultArea.setText(W101Buddy.htmlWrap(W101WikiClient.getWikiPageOrErrorMessage(term, W101WikiClient.PageType.Reagent)));
     }
 
     private void addResultAreaToWindow() {

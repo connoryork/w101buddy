@@ -1,37 +1,45 @@
 package w101buddy;
 
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
-import java.util.Optional;
 
 public class W101WikiClient {
     private static final String WIKI_URL = "https://www.wizard101central.com/wiki/";
+    private static final String FAILED_REQUEST = "Request to Wizard101 Central failed!\nCheck your internet connection and try again.";
+    private static final String PAGE_DOES_NOT_EXIST = "Wiki page does not exist, did you misspell anything?";
 
     enum PageType {
         Reagent,
     }
 
-    public static void main(String[] args) throws IOException {
-        Optional<String> aether = getWikiPage("Aether", PageType.Reagent);
-        assert aether.isPresent();
-        Optional<String> formattedBlackLotus = getWikiPage("Black_Lotus", PageType.Reagent);
-        assert formattedBlackLotus.isPresent();
-        Optional<String> blackLotus = getWikiPage(" Black lotus   ", PageType.Reagent);
-        assert blackLotus.isPresent();
-        Optional<String> misspelled = getWikiPage("Black lots", PageType.Reagent);
-        assert !misspelled.isPresent();
+    public static void main(String[] args) {
+        String aether = getWikiPageOrErrorMessage("Aether", PageType.Reagent);
+        System.out.println("Aether should exist: " + String.valueOf(!aether.equals(PAGE_DOES_NOT_EXIST) && !aether.equals(FAILED_REQUEST)));
+        String formattedBlackLotus = getWikiPageOrErrorMessage("Black_Lotus", PageType.Reagent);
+        System.out.println("Black_Lotus should exist: " + String.valueOf(!formattedBlackLotus.equals(PAGE_DOES_NOT_EXIST) && !formattedBlackLotus.equals(FAILED_REQUEST)));
+        String blackLotus = getWikiPageOrErrorMessage(" Black lotus   ", PageType.Reagent);
+        System.out.println("Black lotus should exist: " + String.valueOf(!blackLotus.equals(PAGE_DOES_NOT_EXIST) && !blackLotus.equals(FAILED_REQUEST)));
+        String misspelled = getWikiPageOrErrorMessage("Black lots", PageType.Reagent);
+        System.out.println("Black lots should error: " + misspelled.equals(PAGE_DOES_NOT_EXIST));
     }
 
-    static Optional<String> getWikiPage(String term, PageType pageType) throws IOException {
+    static String getWikiPageOrErrorMessage(String term, PageType pageType) {
         String formattedTerm = formatTerm(term);
-        Document wikiPage = Jsoup.connect(WIKI_URL + pageType.name() + ":" + formattedTerm).get();
-        if (isEmptyResult(wikiPage)) {
-            return Optional.empty();
+        try {
+            Document wikiPage = Jsoup.connect(WIKI_URL + pageType.name() + ":" + formattedTerm).get();
+            if (isEmptyResult(wikiPage)) {
+                return PAGE_DOES_NOT_EXIST;
+            }
+            return extractInformation(wikiPage);
+        } catch (HttpStatusException e) {
+            return e.getStatusCode() == 404 ? PAGE_DOES_NOT_EXIST : FAILED_REQUEST;
+        } catch (IOException e) {
+            return FAILED_REQUEST;
         }
-        return Optional.of(extractInformation(wikiPage));
     }
 
     private static String formatTerm(String term) {
@@ -41,8 +49,9 @@ public class W101WikiClient {
     }
 
     private static boolean isEmptyResult(Document result) {
+        // this is a fail-safe in case the page does not exist page is returned instead of a 404
         Element noResultDiv = result.getElementById("noarticletext");
-        return noResultDiv == null;
+        return noResultDiv != null;
     }
 
     private static String extractInformation(Document wikiPage) {
