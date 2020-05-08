@@ -10,6 +10,10 @@ import java.util.Optional;
 public class W101WikiClient {
     private static final String WIKI_URL = "https://www.wizard101central.com/wiki/";
 
+    enum PageType {
+        Reagent,
+    }
+
     public static void main(String[] args) throws IOException {
         Optional<String> aether = getWikiPage("Aether", PageType.Reagent);
         assert aether.isPresent();
