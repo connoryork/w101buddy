@@ -6,6 +6,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class W101WikiClient {
     private static final String WIKI_URL = "https://www.wizard101central.com/wiki/";
@@ -19,12 +21,12 @@ public class W101WikiClient {
     public static void main(String[] args) {
         String aether = getWikiPageOrErrorMessage("Aether", PageType.Reagent);
         System.out.println("Aether should exist: " + String.valueOf(!aether.equals(PAGE_DOES_NOT_EXIST) && !aether.equals(FAILED_REQUEST)));
-        String formattedBlackLotus = getWikiPageOrErrorMessage("Black_Lotus", PageType.Reagent);
-        System.out.println("Black_Lotus should exist: " + String.valueOf(!formattedBlackLotus.equals(PAGE_DOES_NOT_EXIST) && !formattedBlackLotus.equals(FAILED_REQUEST)));
-        String blackLotus = getWikiPageOrErrorMessage(" Black lotus   ", PageType.Reagent);
+        String formattedBlackLotus = getWikiPageOrErrorMessage("Black Lotus", PageType.Reagent);
+        System.out.println("Black Lotus should exist: " + String.valueOf(!formattedBlackLotus.equals(PAGE_DOES_NOT_EXIST) && !formattedBlackLotus.equals(FAILED_REQUEST)));
+        String blackLotus = getWikiPageOrErrorMessage(" black  lotus   ", PageType.Reagent);
         System.out.println("Black lotus should exist: " + String.valueOf(!blackLotus.equals(PAGE_DOES_NOT_EXIST) && !blackLotus.equals(FAILED_REQUEST)));
-        String misspelled = getWikiPageOrErrorMessage("Black lots", PageType.Reagent);
-        System.out.println("Black lots should error: " + misspelled.equals(PAGE_DOES_NOT_EXIST));
+        String misspelled = getWikiPageOrErrorMessage("Black a", PageType.Reagent);
+        System.out.println("Black a should error: " + misspelled.equals(PAGE_DOES_NOT_EXIST));
     }
 
     static String getWikiPageOrErrorMessage(String term, PageType pageType) {
@@ -43,9 +45,11 @@ public class W101WikiClient {
     }
 
     private static String formatTerm(String term) {
-        // TODO add capitalization of letter after spaces
-        // TODO replace any number of white space with regex
-        return term.trim().replace(" ", "_");
+        String[] words = term.trim().split("\\s+");
+        return Arrays.stream(words)
+            .filter(word -> !word.isEmpty())
+            .map(word -> Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase())
+            .collect(Collectors.joining("_"));
     }
 
     private static boolean isEmptyResult(Document result) {
