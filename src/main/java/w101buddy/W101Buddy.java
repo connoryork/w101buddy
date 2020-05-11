@@ -41,6 +41,8 @@ public class W101Buddy extends Application {
     private Rectangle boundingBox;
     private int windowX;
     private int windowY;
+    private boolean hasSetWindowLocation = false;
+    private boolean hasFoundIconLocation = false;
 
     // initially only the search bar
     private boolean onlySearchBar = true;
@@ -82,7 +84,7 @@ public class W101Buddy extends Application {
         HTMLEditorKit kit = new HTMLEditorKit();
         resultArea.setEditorKit(kit);
         StyleSheet styleSheet = kit.getStyleSheet();
-        // styleSheet.addRule() for any rules TODO
+        styleSheet.addRule("body {background-color: #e3d8a3;}");
         Document styledDocument = kit.createDefaultDocument();
         resultArea.setDocument(styledDocument);
         resultArea.setMargin(new Insets(5, 5, 5, 5));
@@ -140,11 +142,14 @@ public class W101Buddy extends Application {
     }
 
     private void showWindow() {
-        int bufferedX = W101Buddy.applyWindowSize(windowX, window.getPreferredSize().width, boundingBox.width);
-        int bufferedY = W101Buddy.applyWindowSize(windowY, window.getPreferredSize().height, boundingBox.height);
+        if (!hasSetWindowLocation) {
+            int bufferedX = W101Buddy.applyWindowSize(windowX, window.getPreferredSize().width, boundingBox.width);
+            int bufferedY = W101Buddy.applyWindowSize(windowY, window.getPreferredSize().height, boundingBox.height);
 
-        System.out.println("Placing window at x=" + bufferedX + " y=" + bufferedY);
-        window.setLocation(bufferedX, bufferedY);
+            System.out.println("Placing window at x=" + bufferedX + " y=" + bufferedY);
+            window.setLocation(bufferedX, bufferedY);
+            hasSetWindowLocation = true;
+        }
         window.setVisible(true);
     }
 
@@ -156,7 +161,8 @@ public class W101Buddy extends Application {
             addResultAreaToWindow();
         }
 
-        resultArea.setText(W101Buddy.htmlWrap(W101WikiClient.getWikiPageOrErrorMessage(term, W101WikiClient.PageType.Reagent)));
+        String result = W101Buddy.htmlWrap(W101WikiClient.getWikiPageOrErrorMessage(term, W101WikiClient.PageType.Reagent));
+        resultArea.setText(result);
     }
 
     private void addResultAreaToWindow() {
@@ -170,15 +176,18 @@ public class W101Buddy extends Application {
         return new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                boundingBox = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+                if (!hasFoundIconLocation) {
+                    boundingBox = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 
-                Point clickedPoint = e.getPoint();
-                System.out.println("Click at " + clickedPoint.x + "," + clickedPoint.y);
+                    Point clickedPoint = e.getPoint();
+                    System.out.println("Click at " + clickedPoint.x + "," + clickedPoint.y);
 
-                windowX = applyBounds(clickedPoint.x, boundingBox.x, boundingBox.width);
-                windowY = applyBounds(clickedPoint.y, boundingBox.y, boundingBox.height);
+                    windowX = applyBounds(clickedPoint.x, boundingBox.x, boundingBox.width);
+                    windowY = applyBounds(clickedPoint.y, boundingBox.y, boundingBox.height);
 
-                System.out.println("Window coordinates are " + windowX + "," + windowY);
+                    System.out.println("Window coordinates are " + windowX + "," + windowY);
+                    hasFoundIconLocation = true;
+                }
             }
 
             private int applyBounds(int position, int bound, int length) {

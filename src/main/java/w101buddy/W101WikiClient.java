@@ -4,6 +4,8 @@ import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -13,6 +15,7 @@ public class W101WikiClient {
     private static final String WIKI_URL = "https://www.wizard101central.com/wiki/";
     private static final String FAILED_REQUEST = "Request to Wizard101 Central failed!\nCheck your internet connection and try again.";
     private static final String PAGE_DOES_NOT_EXIST = "Wiki page does not exist, did you misspell anything?";
+    private static final String SRC = "src";
 
     enum PageType {
         Reagent,
@@ -53,12 +56,15 @@ public class W101WikiClient {
     }
 
     private static boolean isEmptyResult(Document result) {
-        // this is a fail-safe in case the page does not exist page is returned instead of a 404
+        // this is a fail-safe in case the 404 redirect page is returned instead of just 404
         Element noResultDiv = result.getElementById("noarticletext");
         return noResultDiv != null;
     }
 
     private static String extractInformation(Document wikiPage) {
-        return ""; // TODO
+        Element infoTable = wikiPage.getElementById("mw-content-text").getElementsByClass("infobox-table").first();
+        Elements images = infoTable.getElementsByClass("image");
+        images.forEach(Node::remove);
+        return infoTable.outerHtml();
     }
 }
