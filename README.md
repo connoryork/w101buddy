@@ -7,6 +7,8 @@ Wizard101 tray icon for quick in-game object information from the wiki
 - Hides when not in use
 - Searches wiki
 
+## Images
+
 ![Icon](/images/icon.png)
 
 ![Toolbar](/images/toolbar.png)
