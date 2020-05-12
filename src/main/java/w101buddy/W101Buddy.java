@@ -7,11 +7,11 @@ import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 import javax.swing.text.Document;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
@@ -34,6 +34,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class W101Buddy extends Application {
+    // TODO executable / deployable
+    // TODO readme
 
     private static final int WIDTH = 40;
     private static final int RESULT_LENGTH = 400;
@@ -43,6 +45,8 @@ public class W101Buddy extends Application {
     private int windowY;
     private boolean hasSetWindowLocation = false;
     private boolean hasFoundIconLocation = false;
+
+    private W101WikiClient.Namespace selectedNamespace = W101WikiClient.Namespace.Reagent;
 
     // initially only the search bar
     private boolean onlySearchBar = true;
@@ -76,6 +80,12 @@ public class W101Buddy extends Application {
         searchBar = new JTextField(WIDTH);
         searchBar.addActionListener(this::performSearch);
         window.add(searchBar);
+
+        JComboBox pageTypeSelectBox = new JComboBox<>(W101WikiClient.Namespace.values());
+        pageTypeSelectBox.setSelectedItem(selectedNamespace);
+        window.add(pageTypeSelectBox);
+        // TODO add action listener to combobox
+
         window.pack();
 
         // scrapped from https://alvinalexander.com/blog/post/jfc-swing/how-create-simple-swing-html-viewer-browser-java/
@@ -88,7 +98,6 @@ public class W101Buddy extends Application {
         Document styledDocument = kit.createDefaultDocument();
         resultArea.setDocument(styledDocument);
         resultArea.setMargin(new Insets(5, 5, 5, 5));
-        resultArea.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
         resultArea.setPreferredSize(new Dimension(WIDTH, RESULT_LENGTH));
 
         resultScroller = new JScrollPane();
@@ -161,7 +170,7 @@ public class W101Buddy extends Application {
             addResultAreaToWindow();
         }
 
-        String result = W101Buddy.htmlWrap(W101WikiClient.getWikiPageOrErrorMessage(term, W101WikiClient.PageType.Reagent));
+        String result = W101Buddy.htmlWrap(W101WikiClient.getWikiPageOrErrorMessage(term, selectedNamespace));
         resultArea.setText(result);
     }
 
