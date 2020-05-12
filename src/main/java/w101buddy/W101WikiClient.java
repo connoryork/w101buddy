@@ -17,6 +17,7 @@ public class W101WikiClient {
     private static final String FAILED_TO_PARSE = "W101Buddy failed to parse the returned data. Refer to https://github.com/connoryork/w101buddy.";
 
     // from http://www.wizard101central.com/wiki/Basic:Creating_New_Pages#Namespaces
+    // which is not an accurate source of truth because Recipe is not mentioned
     enum Namespace {
         BeastmoonForm,
         Creature,
@@ -32,6 +33,7 @@ public class W101WikiClient {
         Polymorph,
         Quest,
         Reagent,
+        Recipe,
         Snack,
         Spell,
         TreasureCard,

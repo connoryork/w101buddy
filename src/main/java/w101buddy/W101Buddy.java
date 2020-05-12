@@ -46,6 +46,7 @@ public class W101Buddy extends Application {
     private boolean hasSetWindowLocation = false;
     private boolean hasFoundIconLocation = false;
 
+    private JComboBox<W101WikiClient.Namespace> namespaceSelectBox;
     private W101WikiClient.Namespace selectedNamespace = W101WikiClient.Namespace.Reagent;
 
     // initially only the search bar
@@ -81,10 +82,10 @@ public class W101Buddy extends Application {
         searchBar.addActionListener(this::performSearch);
         window.add(searchBar);
 
-        JComboBox pageTypeSelectBox = new JComboBox<>(W101WikiClient.Namespace.values());
-        pageTypeSelectBox.setSelectedItem(selectedNamespace);
-        window.add(pageTypeSelectBox);
-        // TODO add action listener to combobox
+        namespaceSelectBox = new JComboBox<>(W101WikiClient.Namespace.values());
+        namespaceSelectBox.setSelectedItem(selectedNamespace);
+        namespaceSelectBox.addActionListener(event -> setSelectedNamespace());
+        window.add(namespaceSelectBox);
 
         window.pack();
 
@@ -160,6 +161,10 @@ public class W101Buddy extends Application {
             hasSetWindowLocation = true;
         }
         window.setVisible(true);
+    }
+
+    private void setSelectedNamespace() {
+        selectedNamespace = (W101WikiClient.Namespace) namespaceSelectBox.getSelectedItem();
     }
 
     private void performSearch(ActionEvent event) {
