@@ -1,11 +1,17 @@
 # W101Buddy
 Wizard101 tray icon for quick in-game object information from the wiki
 
+- Easy to use
+- Quick information on in-game objects
+- No gameplay disruption 
+- Hides when not in use
+- Searches wiki
+
 ![Icon](/images/icon.png)
 
 ![Toolbar](/images/toolbar.png)
 
-![Example](/images/ingame.mov)
+![Example](/images/ingame.gif)
 
 ## Requirements
 
