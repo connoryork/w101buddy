@@ -1,6 +1,8 @@
 # W101Buddy
 Wizard101 tray icon for quick in-game object information from the wiki
 
+Not sure where to find a reagent or what cheats a boss uses? Find out quickly using this!
+
 - Easy to use
 - Quick information on in-game objects
 - No gameplay disruption 
