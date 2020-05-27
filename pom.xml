@@ -15,11 +15,6 @@
             <artifactId>jsoup</artifactId>
             <version>1.13.1</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>sh.tak.appbundler</groupId>-->
-            <!--<artifactId>appbundle-maven-plugin</artifactId>-->
-            <!--<version>1.2.0</version>-->
-        <!--</dependency>-->
     </dependencies>
 
     <build>
@@ -30,23 +25,23 @@
             </resource>
         </resources>
         <plugins>
-            <!--<plugin>-->
-                <!--<groupId>sh.tak.appbundler</groupId>-->
-                <!--<artifactId>appbundle-maven-plugin</artifactId>-->
-                <!--<version>1.2.0</version>-->
-                <!--<configuration>-->
-                    <!--<mainClass>w101buddy.W101Buddy</mainClass>-->
-                    <!--<generateDiskImageFile>true</generateDiskImageFile>-->
-                <!--</configuration>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<phase>package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>bundle</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>sh.tak.appbundler</groupId>
+                <artifactId>appbundle-maven-plugin</artifactId>
+                <version>1.2.0</version>
+                <configuration>
+                    <mainClass>w101buddy.W101Buddy</mainClass>
+                    <generateDiskImageFile>true</generateDiskImageFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>bundle</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
