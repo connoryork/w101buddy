@@ -39,17 +39,6 @@ public class W101WikiClient {
         TreasureCard,
     }
 
-    public static void main(String[] args) {
-        String aether = getWikiPageOrErrorMessage("Aether", Namespace.Reagent);
-        System.out.println("Aether should exist: " + String.valueOf(!aether.equals(PAGE_DOES_NOT_EXIST) && !aether.equals(FAILED_REQUEST)));
-        String formattedBlackLotus = getWikiPageOrErrorMessage("Black Lotus", Namespace.Reagent);
-        System.out.println("Black Lotus should exist: " + String.valueOf(!formattedBlackLotus.equals(PAGE_DOES_NOT_EXIST) && !formattedBlackLotus.equals(FAILED_REQUEST)));
-        String blackLotus = getWikiPageOrErrorMessage(" black  lotus   ", Namespace.Reagent);
-        System.out.println("Black lotus should exist: " + String.valueOf(!blackLotus.equals(PAGE_DOES_NOT_EXIST) && !blackLotus.equals(FAILED_REQUEST)));
-        String misspelled = getWikiPageOrErrorMessage("Black a", Namespace.Reagent);
-        System.out.println("Black a should error: " + misspelled.equals(PAGE_DOES_NOT_EXIST));
-    }
-
     static String getWikiPageOrErrorMessage(String term, Namespace namespace) {
         String formattedTerm = formatTerm(term);
         try {

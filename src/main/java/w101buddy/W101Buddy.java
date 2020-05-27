@@ -30,12 +30,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.io.File;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
+import java.util.Arrays;
 
 public class W101Buddy extends Application {
-    // TODO executable / deployable
-    // TODO readme
 
     private static final int WIDTH = 40;
     private static final int RESULT_LENGTH = 400;
@@ -52,7 +52,6 @@ public class W101Buddy extends Application {
     // initially only the search bar
     private boolean onlySearchBar = true;
     private JFrame window;
-    private JTextField searchBar;
     private JEditorPane resultArea;
     private JScrollPane resultScroller;
 
@@ -78,7 +77,7 @@ public class W101Buddy extends Application {
             }
         });
 
-        searchBar = new JTextField(WIDTH);
+        JTextField searchBar = new JTextField(WIDTH);
         searchBar.addActionListener(this::performSearch);
         window.add(searchBar);
 
@@ -127,12 +126,14 @@ public class W101Buddy extends Application {
     }
 
     private Image getIconImage() {
-        File icon = new File("src/main/resources/white_spiral.png");
         try {
-            return ImageIO.read(icon);
+            URL imageUrl = getClass().getClassLoader().getResource("resources/images/white_spiral.png");
+            return ImageIO.read(imageUrl);
         } catch (IOException e) {
             System.err.println("Icon not found");
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
+            System.err.println(Arrays.toString(e.getStackTrace()));
+            return new BufferedImage(30,30, BufferedImage.TYPE_INT_RGB);
         }
     }
 
